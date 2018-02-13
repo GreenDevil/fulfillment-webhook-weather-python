@@ -73,9 +73,9 @@ def callWeatherApi(city, date, baseurl, wwoApiKey):
     url = baseurl + path
     result = urlopen(url).read()
     print('Result request: ' + result)
-    data = json.loads(result)
-    res = makeWebhookResult(data)
-    return res
+#    data = json.loads(result)
+#    res = makeWebhookResult(data)
+#    return res
 
 
 # def itsm365Weather(req):
