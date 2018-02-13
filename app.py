@@ -2,7 +2,7 @@ from __future__ import print_function
 from future.standard_library import install_aliases
 install_aliases()
 
-import urlib.parse
+import urllib.parse
 
 from urllib.parse import urlparse, urlencode
 from urllib.request import urlopen, Request
