@@ -51,7 +51,7 @@ def processRequest(req):
 
     # callWeatherApi(city, date, baseurl,wwoApiKey)
 
-    speech = "погода в " + city + " for " + date
+    speech = "погода"
 
     print("Response:")
     print(speech)
