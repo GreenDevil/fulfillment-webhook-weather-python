@@ -50,9 +50,10 @@ def webhook():
 
 
 def processRequest(req):
-    if req.get("result").get("action") != "yahooWeatherForecast":
+    if req.get("result").get("action") != "worldweatheronlineAPI":
         return {}
-    baseurl = "https://query.yahooapis.com/v1/public/yql?"
+    baseurl = "http://api.worldweatheronline.com"
+    wwoApiKey = "0ccfbc9eb3ab43d0a34120015181202"
     yql_query = makeYqlQuery(req)
     if yql_query is None:
         return {}
@@ -65,7 +66,10 @@ def processRequest(req):
 
 def makeYqlQuery(req):
     result = req.get("result")
+    print(result)
     parameters = result.get("parameters")
+    print("-----------")
+    print(parameters)
     city = parameters.get("geo-city")
     if city is None:
         return None
