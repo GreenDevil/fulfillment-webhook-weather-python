@@ -43,13 +43,13 @@ def processRequest(req):
     print('Result: ' + result)
     parameters = result.get("parameters")
     print('Parameters: ' + parameters)
-    city = parameters.get("address")
-    if city is None:
-        return None
-    if parameters.get("date"):
-        date = parameters.get("date")
+    # city = parameters.get("address")
+    # if city is None:
+    #     return None
+    # if parameters.get("date"):
+    #     date = parameters.get("date")
 
-    callWeatherApi(city, date, baseurl,wwoApiKey)
+    # callWeatherApi(city, date, baseurl,wwoApiKey)
 
     speech = "погода в " + city + " for " + date
 
