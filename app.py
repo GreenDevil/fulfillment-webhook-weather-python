@@ -41,11 +41,9 @@ def processRequest(req):
     wwoApiKey = "0ccfbc9eb3ab43d0a34120015181202"
 
     result = req.get("result")
-    print(result)
     parameters = result.get("parameters")
-    print("--------------")
     print(parameters)
-    city = parameters.get("address")
+    city = parameters.get("geo-city")
     if city is None:
         return None
     if parameters.get("date"):
