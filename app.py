@@ -2,6 +2,8 @@ from __future__ import print_function
 from future.standard_library import install_aliases
 install_aliases()
 
+from requests.utils import quote
+
 from urllib.parse import urlparse, urlencode
 from urllib.request import urlopen, Request
 from urllib.error import HTTPError
@@ -43,13 +45,13 @@ def processRequest(req):
     print('Result: ' + result)
     parameters = result.get("parameters")
     print('Parameters: ' + parameters)
-    # city = parameters.get("address")
-    # if city is None:
-    #     return None
-    # if parameters.get("date"):
-    #     date = parameters.get("date")
+    city = parameters.get("geo-city")
+    if city is None:
+        return None
+    if parameters.get("date"):
+        date = parameters.get("date")
 
-    # callWeatherApi(city, date, baseurl,wwoApiKey)
+    callWeatherApi(city, date, baseurl,wwoApiKey)
 
     speech = "погода"
 
@@ -66,14 +68,14 @@ def processRequest(req):
 
 
 def callWeatherApi(city, date, baseurl, wwoApiKey):
-    path = '/premium/v1/weather.ashx?format=json&num_of_days=1' + '&q=' + city + '&key=' + wwoApiKey + '&date=' + date + '&lang=ru'
+    path = '/premium/v1/weather.ashx?format=json&num_of_days=1' + '&q=' + quote(city) + '&key=' + wwoApiKey + '&date=' + date + '&lang=ru'
     print('API Request: ' + baseurl + path)
     url = baseurl + path
     result = urlopen(url).read()
     print('Result request: ' + result)
-    # data = json.loads(result)
-    # res = makeWebhookResult(data)
-    # return res
+    data = json.loads(result)
+    res = makeWebhookResult(data)
+    return res
 
 
 # def itsm365Weather(req):
