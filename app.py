@@ -2,7 +2,7 @@ from __future__ import print_function
 from future.standard_library import install_aliases
 install_aliases()
 
-from requests.utils import quote
+import urlib.parse
 
 from urllib.parse import urlparse, urlencode
 from urllib.request import urlopen, Request
@@ -68,7 +68,7 @@ def processRequest(req):
 
 
 def callWeatherApi(city, date, baseurl, wwoApiKey):
-    path = '/premium/v1/weather.ashx?format=json&num_of_days=1' + '&q=' + quote(city) + '&key=' + wwoApiKey + '&date=' + date + '&lang=ru'
+    path = '/premium/v1/weather.ashx?format=json&num_of_days=1' + '&q=' + urllib.parse.quote(city.encode("utf-8")) + '&key=' + wwoApiKey + '&date=' + date + '&lang=ru'
     print('API Request: ' + baseurl + path)
     url = baseurl + path
     result = urlopen(url).read()
