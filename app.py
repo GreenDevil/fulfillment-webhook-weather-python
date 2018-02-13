@@ -1,4 +1,3 @@
-# -*- coding:utf8 -*-
 from __future__ import print_function
 from future.standard_library import install_aliases
 install_aliases()
@@ -49,6 +48,8 @@ def processRequest(req):
     if parameters.get("date"):
         date = parameters.get("date")
 
+    callWeatherApi(city, date, baseurl,wwoApiKey)
+
     speech = "погода в " + city + " for " + date
 
     print("Response:")
@@ -62,6 +63,16 @@ def processRequest(req):
         "source": "apiai-onlinestore-shipping"
     }
 
+
+def callWeatherApi(city, date, baseurl, wwoApiKey):
+    path = '/premium/v1/weather.ashx?format=json&num_of_days=1' + '&q=' + city + '&key=' + wwoApiKey + '&date=' + date + '&lang=ru'
+    print('API Request: ' + baseurl + path)
+    url = baseurl + path
+    result = urlopen(url).read()
+    print('Result request: ' + result)
+    # data = json.loads(result)
+    # res = makeWebhookResult(data)
+    # return res
 
 
 # def itsm365Weather(req):
