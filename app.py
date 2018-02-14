@@ -17,6 +17,7 @@ from flask import make_response
 
 # Flask app should start in global layout
 app = Flask(__name__)
+app.config['DEBUG'] = True
 
 
 @app.route('/webhook', methods=['POST'])
