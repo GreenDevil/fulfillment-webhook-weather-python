@@ -20,7 +20,7 @@ app = Flask(__name__)
 app.config['DEBUG'] = True
 
 
-@app.route('/webhook', methods=['POST'])
+@app.route('/webhook', methods=['GET', 'POST'])
 def webhook():
     req = request.get_json(silent=True, force=True)
 
@@ -33,8 +33,8 @@ def webhook():
     # # print(res)
     # r = make_response(res)
     # r.headers['Content-Type'] = 'application/json'
-    # return r
-
+#     return r
+    return None
 
 # def processRequest(req):
 #     if req.get("result").get("action") != "worldweatheronlineAPI":
