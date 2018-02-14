@@ -1,8 +1,8 @@
+# -*- coding:utf8 -*-
+
 from __future__ import print_function
 from future.standard_library import install_aliases
 install_aliases()
-
-import urllib.parse
 
 from urllib.parse import urlparse, urlencode
 from urllib.request import urlopen, Request
@@ -29,7 +29,7 @@ def webhook():
     res = processRequest(req)
 
     res = json.dumps(res, indent=4)
-    print(res)
+    # print(res)
     r = make_response(res)
     r.headers['Content-Type'] = 'application/json'
     return r
@@ -38,22 +38,57 @@ def webhook():
 def processRequest(req):
     if req.get("result").get("action") != "worldweatheronlineAPI":
         return {}
-    baseurl = "http://api.worldweatheronline.com"
+    baseurl = "https://api.worldweatheronline.com/premium/v1/weather.ashx?format=json&num_of_days=1"
     wwoApiKey = "0ccfbc9eb3ab43d0a34120015181202"
+    yql_query = makeYqlQuery(req)
+    if yql_query is None:
+        return {}
+    yql_url = baseurl + urlencode({'q': yql_query}) + '&key=' + wwoApiKey + '&date=' + date + '&lang=ru'
+    print('Yql_url: '  + yql_url)
+    result = urlopen(yql_url).read()
+    data = json.loads(result)
+    print('Data: ' + data)
+    res = makeWebhookResult(data)
+    return res
 
+
+def makeYqlQuery(req):
     result = req.get("result")
-    print('Result: ' + result)
     parameters = result.get("parameters")
-    print('Parameters: ' + parameters)
     city = parameters.get("geo-city")
     if city is None:
         return None
-    if parameters.get("date"):
-        date = parameters.get("date")
 
-    callWeatherApi(city, date, baseurl,wwoApiKey)
+    return "select * from weather.forecast where woeid in (select woeid from geo.places(1) where text='" + city + "')"
 
-    speech = "погода"
+
+def makeWebhookResult(data):
+    query = data.get('query')
+    if query is None:
+        return {}
+
+    result = query.get('results')
+    if result is None:
+        return {}
+
+    channel = result.get('channel')
+    if channel is None:
+        return {}
+
+    item = channel.get('item')
+    location = channel.get('location')
+    units = channel.get('units')
+    if (location is None) or (item is None) or (units is None):
+        return {}
+
+    condition = item.get('condition')
+    if condition is None:
+        return {}
+
+    # print(json.dumps(item, indent=4))
+
+    speech = "Today the weather in " + location.get('city') + ": " + condition.get('text') + \
+             ", And the temperature is " + condition.get('temp') + " " + units.get('temperature')
 
     print("Response:")
     print(speech)
@@ -61,76 +96,10 @@ def processRequest(req):
     return {
         "speech": speech,
         "displayText": speech,
-        #"data": {},
+        # "data": data,
         # "contextOut": [],
-        "source": "apiai-onlinestore-shipping"
+        "source": "apiai-weather-webhook-sample"
     }
-
-
-def callWeatherApi(city, date, baseurl, wwoApiKey):
-    path = '/premium/v1/weather.ashx?format=json&num_of_days=1' + '&q=' + urllib.parse.quote(city.encode("utf-8")) + '&key=' + wwoApiKey + '&date=' + date + '&lang=ru'
-    print('API Request: ' + baseurl + path)
-    url = baseurl + path
-    result = urlopen(url).read()
-    print('Result request: ' + result)
-#    data = json.loads(result)
-#    res = makeWebhookResult(data)
-#    return res
-
-
-# def itsm365Weather(req):
-#     result = req.get("result")
-#     print(result)
-#     parameters = result.get("parameters")
-#     print("------------")
-#     print(parameters)
-#     city = parameters.get("address")
-#     if city is None:
-#         return None
-#     if parameters.get("date"):
-#         date = parameters.get("date")
-
-#     return "select * from weather.forecast where woeid in (select woeid from geo.places(1) where text='" + city + "')"
-
-
-# def makeWebhookResult(data):
-#     query = data.get('query')
-#     if query is None:
-#         return {}
-
-#     result = query.get('results')
-#     if result is None:
-#         return {}
-
-#     channel = result.get('channel')
-#     if channel is None:
-#         return {}
-
-#     item = channel.get('item')
-#     location = channel.get('location')
-#     units = channel.get('units')
-#     if (location is None) or (item is None) or (units is None):
-#         return {}
-
-#     condition = item.get('condition')
-#     if condition is None:
-#         return {}
-
-#     # print(json.dumps(item, indent=4))
-
-#     speech = "Сегодня погода в " + location.get('city') + ": " + condition.get('text') + \
-#              ", И температура " + condition.get('temp') + " " + units.get('temperature')
-
-#     print("Response:")
-#     print(speech)
-
-#     return {
-#         "speech": speech,
-#         "displayText": speech,
-#         # "data": data,
-#         # "contextOut": [],
-#         "source": "apiai-weather-webhook-sample"
-#     }
 
 
 if __name__ == '__main__':
